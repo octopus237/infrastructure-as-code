@@ -1,6 +1,8 @@
 ---
 - name: Configure nginx server
   hosts: servers
+  vars_files:
+    - variables.yml
   tasks:
   - name: upgrade repo
     apt: update_cache=true force_apt_get=true
