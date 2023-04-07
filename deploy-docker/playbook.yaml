@@ -19,7 +19,7 @@
 
   - name: add docker repository
     apt_repository:
-      repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   jammy stable"
+      repo: 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   {{ ubuntu-release }}'
   - name: update repo
     apt: update_cache=true force_apt_get=true
   - name: install docker and co
@@ -42,12 +42,12 @@
       groups: docker
   - name: pull the application
     docker_container:
-      name: web-app
+      name: '{{ container-name }}'
       auto_remove: yes
       detach: yes
-      image: jobri237/ammar:1
+      image: '{{ docker-image }}'
       network_mode: bridge
       published_ports: 
-      - 80:80
+      - '{{ port-binding }}'
       pull: yes
 
