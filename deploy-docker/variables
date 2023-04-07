@@ -1,5 +1,0 @@
-user: brice
-docker-image: ammartutunchy/portfolio:1
-port-binding: 80:80
-container-name: web-app
-ubuntu-release: 'jammy stable'
