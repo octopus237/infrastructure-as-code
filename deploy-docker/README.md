@@ -16,6 +16,6 @@ vagrant box add hashicorp/bionic64
 
 Check the variables.yml file before spinning up the instance
 
-To spin up the instance use the command 'vagrant up'  
+To spin up the instance use the command `vagrant up`  
 
 While spinning up, the vagrant box will automatically be configured using the ansible playbook 
