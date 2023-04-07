@@ -2,5 +2,6 @@
 ![My Image](images/bg1.png)
 
 ### Tools used
-- Ansible v
-- Docker v
+- Ansible v2.14.4
+- Vagrant v2.3.4
+
