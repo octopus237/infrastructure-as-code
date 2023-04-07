@@ -12,7 +12,10 @@ I used virtualbox as vagrant provisioner, run the command below and select your 
 
 ```!bash
 vagrant box add hashicorp/bionic64
-vagrant up
 ```
 
-While spinning up the vagrant box will automatically be configured using the ansible playbook 
+Check the variables.yml file before spinning up the instance
+
+To spin up the instance use the command 'vagrant up'  
+
+While spinning up, the vagrant box will automatically be configured using the ansible playbook 
