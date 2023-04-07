@@ -8,10 +8,11 @@
 ### Running this playbook
 **Quick Steps:**
 
-1. Vagrant Box
 I used virtualbox as vagrant provisioner, run the command below and select your prefered provisioner
 
 ```!bash
 vagrant box add hashicorp/bionic64
 vagrant up
 ```
+
+While spinning up the vagrant box will automatically be configured using the ansible playbook 
