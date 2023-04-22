@@ -1,5 +1,5 @@
 ---
-- name: Configure nginx server
+- name: Install docker engine and run a container
   hosts: servers
   vars_files:
     - variables.yml
