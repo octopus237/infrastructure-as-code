@@ -4,52 +4,54 @@
   vars_files:
     - variables.yml
   tasks:
-  - name: upgrade repo
-    apt: update_cache=true force_apt_get=true
-  - name: install-dependencies
-    apt:
-      pkg:
-        - curl
-        - gnupg
-        - ca-certificates
+    - block:
+      when: ansible_distribution == "Ubuntu"
+      - name: upgrade repo
+        apt: update_cache=true force_apt_get=true
+      - name: install-dependencies
+        apt:
+          pkg:
+            - curl
+            - gnupg
+            - ca-certificates
 
-  - name: add docker GPG key
-    apt_key:
-      url: https://download.docker.com/linux/ubuntu/gpg
-      state: present
-      keyring: /etc/apt/keyrings/docker.gpg
+      - name: add docker GPG key
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+          keyring: /etc/apt/keyrings/docker.gpg
 
-  - name: add docker repository
-    apt_repository:
-      repo: 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   {{ ubuntu-release }}'
-  - name: update repo
-    apt: update_cache=true force_apt_get=true
-  - name: install docker and co
-    apt:
-      pkg:
-        - docker-ce
-        - docker-ce-cli
-        - containerd.io
-        - docker-buildx-plugin
-        - docker-compose-plugin
-  - name: start docker
-    service:
-      name: docker
-      state: started
-      enabled: yes
-  - name: add user to docker group
-    user:
-      name: brice
-      append: yes
-      groups: docker
-  - name: pull the application
-    docker_container:
-      name: '{{ container-name }}'
-      auto_remove: yes
-      detach: yes
-      image: '{{ docker-image }}'
-      network_mode: bridge
-      published_ports: 
-      - '{{ port-binding }}'
-      pull: yes
+      - name: add docker repository
+        apt_repository:
+          repo: 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   {{ ubuntu-release }}'
+      - name: update repo
+        apt: update_cache=true force_apt_get=true
+      - name: install docker and co
+        apt:
+          pkg:
+            - docker-ce
+            - docker-ce-cli
+            - containerd.io
+            - docker-buildx-plugin
+            - docker-compose-plugin
+      - name: start docker
+        service:
+          name: docker
+          state: started
+          enabled: yes
+      - name: add user to docker group
+        user:
+          name: brice
+          append: yes
+          groups: docker
+      - name: pull the application
+        docker_container:
+          name: '{{ container-name }}'
+          auto_remove: yes
+          detach: yes
+          image: '{{ docker-image }}'
+          network_mode: bridge
+          published_ports: 
+          - '{{ port-binding }}'
+          pull: yes
 
