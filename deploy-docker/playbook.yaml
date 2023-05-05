@@ -21,11 +21,21 @@
           state: present
           keyring: /etc/apt/keyrings/docker.gpg
 
+      - name: get docker repository
+        shell: 'echo \
+  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable"'
+        register: docker-repo
+        
+      - debug: var=docker-repo
+      
       - name: add docker repository
         apt_repository:
-          repo: 'deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu   {{ ubuntu-release }}'
+          repo: '{{ docker-repo }}'
+          
       - name: update repo
         apt: update_cache=true force_apt_get=true
+        
       - name: install docker and co
         apt:
           pkg:
