@@ -1,70 +1,63 @@
----
+---      
 - name: Install docker engine and run a container
   hosts: servers
   vars_files:
     - variables.yml
   tasks:
     - block:
-      when: ansible_distribution == "Ubuntu"
-      - name: upgrade repo
-        apt: update_cache=true force_apt_get=true
-      - name: install-dependencies
-        apt:
-          pkg:
-            - curl
-            - gnupg
-            - ca-certificates
-
-      - name: add docker GPG key
-        apt_key:
-          url: https://download.docker.com/linux/ubuntu/gpg
-          state: present
-          keyring: /etc/apt/keyrings/docker.gpg
-
-      - name: get docker repository
-        shell: 'echo \
+        - name: upgrade repo
+          apt: update_cache=true force_apt_get=true
+        - name: install-dependencies
+          apt:
+            pkg:
+              - curl
+              - gnupg
+              - ca-certificates
+        - name: add docker GPG key
+          apt_key:
+            url: https://download.docker.com/linux/ubuntu/gpg
+            state: present
+            keyring: /etc/apt/keyrings/docker.gpg
+        - name: get docker repository
+          shell: 'echo \
   "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
   "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable"'
-        register: docker-repo
-        
-      - debug: var=docker-repo
-      
-      - name: add docker repository
-        apt_repository:
-          repo: '{{ docker-repo }}'
-          
-      - name: update repo
-        apt: update_cache=true force_apt_get=true
-        
-      - name: install docker and co
-        apt:
-          pkg:
-            - docker-ce
-            - docker-ce-cli
-            - containerd.io
-            - docker-buildx-plugin
-            - docker-compose-plugin
-      - name: start docker
-        service:
-          name: docker
-          state: started
-          enabled: yes
-      - name: add user to docker group
-        user:
-          name: brice
-          append: yes
-          groups: docker
-      - name: pull the application
-        docker_container:
-          name: '{{ container-name }}'
-          auto_remove: yes
-          detach: yes
-          image: '{{ docker-image }}'
-          network_mode: bridge
-          published_ports: 
-          - '{{ port-binding }}'
-          pull: yes
-      
+          register: dockerrepo
+        - debug: var=dockerrepo
+        - apt_repository: 
+            repo: '{{ dockerrepo.stdout }}'
+            state: present
+        - name: update repo
+          apt: update_cache=true force_apt_get=true
+        - name: install docker and co
+          apt:
+            pkg:
+              - docker-ce
+              - docker-ce-cli
+              - containerd.io
+              - docker-buildx-plugin
+              - docker-compose-plugin
+        - name: start docker
+          service:
+            name: docker
+            state: started
+            enabled: yes
+        - name: add user to docker group
+          user:
+            name: '{{ user }}'
+            append: yes
+            groups: docker
+      when: ansible_distribution == "Ubuntu"
+        - name: pull the application
+          docker_container:
+            name: '{{ container-name }}'
+            auto_remove: yes
+            detach: yes
+            image: '{{ docker-image }}'
+            network_mode: bridge
+            published_ports: 
+            - '{{ port-binding }}'
+            pull: yes
       rescue:
         - debug:
             msg: "Playbook has failed for {{ inventory_hostname}} node" 
