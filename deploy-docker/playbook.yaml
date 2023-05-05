@@ -13,22 +13,32 @@
               - curl
               - gnupg
               - ca-certificates
+
         - name: add docker GPG key
           apt_key:
             url: https://download.docker.com/linux/ubuntu/gpg
             state: present
             keyring: /etc/apt/keyrings/docker.gpg
-        - name: get docker repository
-          shell: 'echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable"'
-          register: dockerrepo
-        - debug: var=dockerrepo
-        - apt_repository: 
-            repo: '{{ dockerrepo.stdout }}'
+
+        - name: ubuntu version
+          shell: echo "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable""
+          register: ubuntuversion
+
+        - name: architecture
+          shell: echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu"
+          register: ubuntuarch
+
+        - debug: var=ubuntuversion
+        - debug: var=ubuntuarch
+
+        - name: add docker repo
+          apt_repository: 
+            repo: '{{ ubuntuarch.stdout }} {{ ubuntuversion.stdout }}'
             state: present
+              
         - name: update repo
           apt: update_cache=true force_apt_get=true
+        
         - name: install docker and co
           apt:
             pkg:
@@ -47,6 +57,8 @@
             name: '{{ user }}'
             append: yes
             groups: docker
+      
+      when: ansible_distribution == "Ubuntu"
       when: ansible_distribution == "Ubuntu"
         - name: pull the application
           docker_container:
