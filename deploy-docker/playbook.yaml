@@ -59,7 +59,6 @@
             groups: docker
       
       when: ansible_distribution == "Ubuntu"
-      when: ansible_distribution == "Ubuntu"
         - name: pull the application
           docker_container:
             name: '{{ container-name }}'
