@@ -8,5 +8,8 @@ variable "instance_type" {
 
 variable "ami" {
     default = "ami-07dfed28fcf95241c"
-  
+}
+
+variable "public_key" {
+  default = "~/.ssh/dev-server.pub"
 }

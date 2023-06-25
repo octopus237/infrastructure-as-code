@@ -11,7 +11,7 @@ resource "aws_instance" "app_server" {
 }
 
 resource "aws_key_pair" "dev-server" {
-  public_key = file("~/.ssh/dev-server.pub")
+  public_key = file(var.public_key)
   key_name = "server-key"
 }
 
