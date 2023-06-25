@@ -6,6 +6,13 @@ resource "aws_s3_bucket" "remote-state" {
   }
 }
 
+resource "aws_s3_bucket_versioning" "remote-state-versioning" {
+  bucket = aws_s3_bucket.remote-state.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
 resource "aws_dynamodb_table" "dynamo-table" {
   name         = "tfstate-locking"
   billing_mode = "PAY_PER_REQUEST"
