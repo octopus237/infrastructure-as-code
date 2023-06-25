@@ -1,6 +1,6 @@
 ---      
 - name: Install docker engine and run a container
-  hosts: servers
+  hosts: host1
   vars_files:
     - variables.yml
   tasks:
@@ -57,8 +57,7 @@
             name: '{{ user }}'
             append: yes
             groups: docker
-      
-      when: ansible_distribution == "Ubuntu"
+
         - name: pull the application
           docker_container:
             name: '{{ container-name }}'
@@ -69,7 +68,8 @@
             published_ports: 
             - '{{ port-binding }}'
             pull: yes
+  
+      when: ansible_distribution == "Ubuntu"
       rescue:
         - debug:
             msg: "Playbook has failed for {{ inventory_hostname}} node" 
-
