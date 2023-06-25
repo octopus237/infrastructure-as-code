@@ -1,1 +1,0 @@
-../../iac/tfm-projects/providers.tf
