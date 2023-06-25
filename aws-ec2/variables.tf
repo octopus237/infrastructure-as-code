@@ -1,0 +1,1 @@
+../../iac/tfm-projects/variables.tf
